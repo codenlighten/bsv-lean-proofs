@@ -1,0 +1,11 @@
+Clean build of commit d62bcc0 from a fresh clone, 2026-10-09T20:34Z, Lake version 5.0.0-src+5045d00 (Lean version 4.34.1), x86_64
+
+$ lake build
+Build completed successfully (33 jobs).
+exit 0
+
+$ lake env leanchecker <all 30 BsvLeanProofs modules>
+exit 0
+
+$ grep for sorry, admit, native_decide, unsafe, implemented_by, axiom declarations
+matches: 0
