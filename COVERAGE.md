@@ -7,20 +7,21 @@ with compiled reference code on stated inputs, which is evidence and not proof.
 
 ## Script
 
-| Part | Files | Proved | Tested against a compiled v1.2.3 node |
+| Part | Files | Proved (about the model) | Tested against compiled reference code |
 |---|---|---|---|
-| Number reading and encoding | `ScriptNum`, `RoundTrip`, `MinEncode`, `MinimalUnique` | acceptance condition of the reader, round trip, uniqueness of minimal encodings | 1.18 million inputs against the C++ headers |
-| OP_CAT, OP_SPLIT, OP_NUM2BIN, OP_BIN2NUM, OP_SIZE, OP_SUBSTR, OP_LEFT, OP_RIGHT | `Splice`, `SpliceProps`, `Convert` | results on success, error conditions, inverse laws | 6,264 vectors |
-| OP_LSHIFTNUM, OP_RSHIFTNUM | `ShiftNum` | results are x·2ⁿ and x/2ⁿ toward zero; the big-integer refusal | 4,560 vectors |
-| OP_LSHIFT, OP_RSHIFT | `ByteShift` | result length only; the result is DEFINED arithmetically, and that the source's byte loop computes it is not proved | 1,920 vectors |
-| 25 arithmetic and comparison opcodes | `Arith`, `ArithProps` | results of OP_ADD, OP_MUL, OP_DIV, OP_MOD; no 64-bit overflow before Genesis | 20,256 vectors |
-| The interpreter loop: decoding, minimal pushes, conditionals, OP_RETURN, stack, alt-stack and bitwise opcodes, limits, final checks | `Interp`, `InterpProps` | only that the loop's fuel is never exhausted, and two truthiness facts | about one million random scripts (see `difftest/README.md`) |
+| Number reading and encoding | `ScriptNum`, `RoundTrip`, `MinEncode`, `MinimalUnique` | acceptance condition of the reader, round trip, uniqueness of minimal encodings | 1.18 million inputs against the node's own C++ reader and encoder |
+| OP_CAT, OP_SPLIT, OP_NUM2BIN, OP_BIN2NUM, OP_SIZE, OP_SUBSTR, OP_LEFT, OP_RIGHT | `Splice`, `SpliceProps`, `Convert` | results on success, error conditions, inverse laws | 6,264 vectors on v1.2.3 `VerifyScript` |
+| OP_LSHIFTNUM, OP_RSHIFTNUM | `ShiftNum` | results are x·2ⁿ and x/2ⁿ toward zero; the big-integer refusal | 4,560 vectors on v1.2.3 `VerifyScript` |
+| OP_LSHIFT, OP_RSHIFT | `ByteShift` | result length only; the result is DEFINED arithmetically, and that the source's byte loop computes it is not proved | 1,920 vectors on v1.2.3 `VerifyScript` |
+| 25 arithmetic and comparison opcodes | `Arith`, `ArithProps` | results of OP_ADD, OP_MUL, OP_DIV, OP_MOD; no 64-bit overflow before Genesis | 20,256 vectors on v1.2.3 `VerifyScript` |
+| The interpreter loop: decoding, minimal pushes, conditionals, OP_RETURN, stack, alt-stack and bitwise opcodes, limits, final checks | `Interp`, `InterpProps` | only that the loop's fuel is never exhausted, and two truthiness facts | about one million random scripts on v1.2.3 `VerifyScript` (see `difftest/README.md`) |
 
 Eras covered: outputs created before Genesis, after Genesis, and after
 Chronicle, always spent with Chronicle active. Flag words: the block word and
 the relay word in the curated vectors; random subsets of MINIMALDATA,
 DISCOURAGE_UPGRADABLE_NOPS, CLEANSTACK, MINIMALIF and P2SH in the random
-scripts; transaction versions 1 and 2.
+scripts (the P2SH flag only changes the flag-validity check: no generated
+script has the pay-to-script-hash form, which starts with a hash opcode); transaction versions 1 and 2.
 
 Not modelled in script:
 
@@ -38,7 +39,7 @@ Not modelled in script:
 
 | Part | Files | Proved | Tested |
 |---|---|---|---|
-| Accepted signature-hash type bytes | `SighashType` | which bytes the node and the Go SDK accept, and where they differed | 2,048 cases on the node, 4,096 on the SDK |
+| Accepted signature-hash type bytes | `SighashType` | which bytes the modelled checks accept, and where the models of the node and of the Go SDK (v1.7.0, and its master at commit 511b58ce) differ | the models agree with the compiled code on 2,048 cases (node) and 4,096 cases (each SDK revision) |
 | A strict signature parser of an independent Rust node implementation (not bitcoin-sv's) | `StrictSignature` | each accepted byte string is the one canonical encoding of its (r, s) pair | — |
 | Fork-id digest layout | `SighashPreimage` | the preimage determines each of its fields | — |
 | Fork-id digest, type ALL | `SighashCommit` | equal digests give equal version, inputs' outpoints and sequence numbers, outputs, lock time, script code and amount, or a named hash collision | — |
@@ -53,7 +54,7 @@ used without the fork-id bit or with the Chronicle bit; ECDSA.
 
 | Part | Files | Proved | Tested |
 |---|---|---|---|
-| Root, branch and mutation flag as the reference computes them | `Merkle*` | equality with the tree definition; correct exactly up to 2³¹ leaves for a 32-bit counter; a branch folds to the root | 9,718 cases |
+| Root, branch and mutation flag | `Merkle*` | the model of the node's constant-space computation equals the tree definition; with a 32-bit leaf counter the modelled computation returns the correct root for up to 2³¹ leaves and reaches a counter overflow for more (both directions proved; what the compiled code does after the overflow is not modelled); a branch folds to the root | the model agrees with the node's `merkle.cpp` on 9,718 cases |
 
 Not covered: SHA-256 (hashing is a parameter), and block or transaction
 parsing.

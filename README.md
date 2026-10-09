@@ -12,12 +12,13 @@ Authors: Gregory J. Ward, Bryan W. Daugherty, Shawn M. Ryan.
   and conversion opcodes, the numeric and byte-string shifts, the arithmetic
   and comparison opcodes, and the interpreter loop, for outputs created
   before Genesis, after Genesis and after Chronicle.
-- **Signatures.** Which signature-hash type bytes the node accepts, and what the
-  fork-id signature digest fixes for each signature-hash type, stated as
-  reductions to hash collisions.
-- **Merkle trees.** The node's constant-space Merkle root, branch and mutation
-  computation, proved equal to the tree definition, with its exact limit for
-  a 32-bit leaf counter.
+- **Signatures.** A model of which signature-hash type bytes the node's checks
+  accept, and, for a model of the fork-id signature digest (serialization
+  assumed), what it fixes for each signature-hash type, stated as reductions
+  to hash collisions.
+- **Merkle trees.** A model of the node's constant-space Merkle root, branch and
+  mutation computation, proved equal to the tree definition up to the exact
+  limit a 32-bit leaf counter allows, and tested against the node's code.
 - **Conformance vectors** (`vectors/`): 57,571 rows in the five current files, whose expected verdict is
   what the Lean model returns, in a JSON format a script interpreter can run
   directly. A compiled bitcoin-sv v1.2.3 `VerifyScript` returns the expected
