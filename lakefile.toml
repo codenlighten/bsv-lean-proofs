@@ -1,0 +1,30 @@
+name = "BsvLeanProofs"
+version = "0.1.0"
+defaultTargets = ["BsvLeanProofs"]
+
+[[lean_lib]]
+name = "BsvLeanProofs"
+
+[[lean_exe]]
+name = "fixtures"
+root = "Fixtures"
+
+[[lean_exe]]
+name = "merkletest"
+root = "MerkleTest"
+
+[[lean_exe]]
+name = "readercheck"
+root = "ReaderCheck"
+
+[[lean_exe]]
+name = "merkledump"
+root = "MerkleDump"
+
+[[lean_exe]]
+name = "vectors"
+root = "Vectors"
+
+[[lean_exe]]
+name = "scripteval"
+root = "ScriptEval"

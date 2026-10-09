@@ -1,0 +1,57 @@
+package interpreter
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"testing"
+
+	"github.com/bsv-blockchain/go-sdk/script/interpreter/errs"
+	"github.com/bsv-blockchain/go-sdk/script/interpreter/scriptflag"
+	sighash "github.com/bsv-blockchain/go-sdk/transaction/sighash"
+)
+
+// Dumps checkHashTypeEncoding for every byte and every setting of the flags
+// it reads, for comparison with the Lean model checkMaster.
+func TestDumpHashType(t *testing.T) {
+	f, err := os.Create(os.Getenv("HASHTYPE_OUT"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	for _, strict := range []bool{false, true} {
+		for _, bip143 := range []bool{false, true} {
+			for _, forkid := range []bool{false, true} {
+				for _, chron := range []bool{false, true} {
+					var fl scriptflag.Flag
+					if strict {
+						fl |= scriptflag.VerifyStrictEncoding
+					}
+					if bip143 {
+						fl |= scriptflag.VerifyBip143SigHash
+					}
+					if forkid {
+						fl |= scriptflag.EnableSighashForkID
+					}
+					if chron {
+						fl |= scriptflag.Chronicle
+					}
+					th := &thread{flags: fl}
+					for b := 0; b < 256; b++ {
+						e := th.checkHashTypeEncoding(sighash.Flag(b))
+						v := "accept"
+						if e != nil {
+							var se errs.Error
+							if errors.As(e, &se) {
+								v = se.ErrorCode.String()
+							} else {
+								v = "other"
+							}
+						}
+						fmt.Fprintf(f, "%v %v %v %v %02x %s\n", strict, bip143, forkid, chron, b, v)
+					}
+				}
+			}
+		}
+	}
+}
