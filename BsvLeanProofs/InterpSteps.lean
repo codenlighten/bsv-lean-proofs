@@ -406,6 +406,23 @@ theorem execOp_numNotEqual (x2 x1 : Elem) (r : Stack) (a b : Int) (h1 : num c.p 
 
 end ExecOp
 
+/-- After Genesis, a minimally encoded number reads back as itself (the reader
+used for PICK, SPLIT and NUM2BIN indices and for the arithmetic operands). -/
+theorem num_encInt {p : Params} (n : Int) (hag : p.afterGenesis = true)
+    (hl : (encInt n).length ≤ p.maxNumLen) : num p (encInt n) = .ok n := by
+  have hm := isMinimal_encInt n
+  by_cases he : (encInt n).isEmpty = true
+  · have h0 : encInt n = [] := List.isEmpty_iff.mp he
+    have hd : denote ([] : Elem) = 0 := by decide
+    have hn : n = 0 := by
+      have := denote_encInt n
+      rw [h0, hd] at this
+      exact this.symm
+    subst hn
+    rw [h0] at hm hl
+    simp [num, scriptNum, h0, isMinimalMax, hm, hl]
+  · simp [num, scriptNum, hag, hm, isMinimalMax, hl, he, denote_encInt]
+
 /-! ### The lemmas compose
 
 A one-opcode script, run from an arbitrary executing state: the chain
