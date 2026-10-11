@@ -17,10 +17,11 @@ of them describes an error outcome.
 * `step_push`, `step_plain`, `step_if`, `step_else`, `step_endif`: what `step`
   does in an executing state (every enclosing conditional taken, no OP_RETURN);
   `step_if_skip`, `step_skip`: what it does while a branch is skipped;
+  `step_return_done`, `step_return_cond`: OP_RETURN after Genesis;
 * `execOp_*`: the stack effect of single opcodes.
 
-Not covered: OP_VERIF / OP_VERNOTIF (0x65, 0x66), OP_RETURN, and all error
-outcomes of `step`.
+Not covered: OP_VERIF / OP_VERNOTIF (0x65, 0x66), the error outcomes of `step`, and
+OP_RETURN before Genesis (an error) or while skipping (`step_skip` excludes it).
 
 Everything is about the Lean text of `Interp.lean`; whether that text is
 `EvalScript` is the subject of `difftest/README.md`.
@@ -405,6 +406,36 @@ theorem execOp_numNotEqual (x2 x1 : Elem) (r : Stack) (a b : Int) (h1 : num c.p 
   simp [execOp, modelled, unaryOf, binaryOf, opBinary, h1, h2, liftE, Except.map]
 
 end ExecOp
+
+/-- OP_RETURN after Genesis, outside any conditional: the script ends successfully. -/
+theorem step_return_done {c : Cfg} {s : State} (hx : Executing s)
+    (hag : c.p.afterGenesis = true) (hc : s.conds = []) (hmo : s.ops + 1 ≤ c.maxOps) :
+    step c s 0x6a [] = .done { s with ops := s.ops + 1 } := by
+  obtain ⟨h1, h2⟩ := hx
+  rcases s with ⟨stk, alt, conds, ops, ret⟩
+  simp only at hc h2 hmo
+  subst hc h2
+  have n2 : ¬ (c.maxOps < ops + 1) := by omega
+  simp [step, hag, n2]
+
+/-- OP_RETURN after Genesis, inside a conditional: execution continues with the
+`ret` flag set, so later instructions are skipped (except the conditional ones). -/
+theorem step_return_cond {c : Cfg} {s : State} {x : Bool × Bool} {r : List (Bool × Bool)}
+    (hx : Executing s) (hag : c.p.afterGenesis = true) (hc : s.conds = x :: r)
+    (hmo : s.ops + 1 ≤ c.maxOps)
+    (hfin : finOk c { s with ret := true, ops := s.ops + 1 } = true) :
+    step c s 0x6a [] = .cont { s with ret := true, ops := s.ops + 1 } := by
+  obtain ⟨h1, h2⟩ := hx
+  obtain ⟨hf1, hf2⟩ := Bool.and_eq_true_iff.mp hfin
+  simp only [Bool.not_eq_true'] at hf1 hf2
+  rcases s with ⟨stk, alt, conds, ops, ret⟩
+  simp only at hc h2 hmo h1 hf1 hf2
+  subst hc h2
+  simp at hf1 hf2
+  have n2 : ¬ (c.maxOps < ops + 1) := by omega
+  have n6 : ¬ (∃ y, y ∈ stk ∧ c.budget < y.length) := by
+    rintro ⟨y, hy, h⟩; have := hf2 y hy; omega
+  simp [step, hag, n2, n6, h1]
 
 /-- After Genesis, a minimally encoded number reads back as itself (the reader
 used for PICK, SPLIT and NUM2BIN indices and for the arithmetic operands). -/
