@@ -17,8 +17,8 @@ The lemmas are the success cases of `InterpSteps.lean` lifted to whole scripts.
 * `Sc s0 stk n cs`: the same inside the open conditionals `cs`.
 * `Fits c stk`: every element is at most `c.budget` bytes (the `finOk` side condition).
 
-These definitions and lemmas were developed for the compiler-correctness proof of a Boolean
-gate fragment (a separate project that imports this library) and moved here because nothing in
+These definitions and lemmas were first written inside the compiler-correctness proof of a Boolean
+gate fragment (a separate project that imports this library) and copied here because nothing in
 them mentions gates.
 -/
 
