@@ -23,6 +23,7 @@ import BsvLeanProofs.ShiftNum
 import BsvLeanProofs.ByteShift
 import BsvLeanProofs.ByteShiftLoop
 import BsvLeanProofs.InterpSteps
+import BsvLeanProofs.InterpRuns
 import BsvLeanProofs.ArithProps
 import BsvLeanProofs.Interp
 import BsvLeanProofs.InterpProps
