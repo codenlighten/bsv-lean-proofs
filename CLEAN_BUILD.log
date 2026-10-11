@@ -21,3 +21,15 @@ exit 0
 
 $ grep for sorry, admit, native_decide, unsafe, implemented_by, axiom declarations
 matches: 0
+
+Clean build of commit 9af374a from a fresh clone, 2026-10-11T20:42Z, Lake version 5.0.0-src+5045d00 (Lean version 4.34.1), x86_64
+
+$ lake build
+Build completed successfully (35 jobs).
+exit 0
+
+$ lake env leanchecker <all 32 BsvLeanProofs modules>
+exit 0
+
+$ grep for sorry, admit, native_decide, unsafe, implemented_by, axiom declarations
+matches: 0
