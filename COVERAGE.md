@@ -26,7 +26,8 @@ script has the pay-to-script-hash form, which starts with a hash opcode); transa
 Not modelled in script:
 
 - the hash opcodes and OP_CHECKSIG, OP_CHECKSIGVERIFY, OP_CHECKMULTISIG,
-  OP_CHECKMULTISIGVERIFY;
+  OP_CHECKMULTISIGVERIFY, so the error names of the signature paths (for example
+  SIG_NULLFAIL, SIG_HIGH_S, SIG_DER) are never produced by the whole-script corpus;
 - OP_CHECKLOCKTIMEVERIFY and OP_CHECKSEQUENCEVERIFY where they are active
   (outputs before Genesis);
 - pay-to-script-hash evaluation;
