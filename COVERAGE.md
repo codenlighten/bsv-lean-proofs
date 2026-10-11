@@ -12,7 +12,7 @@ with compiled reference code on stated inputs, which is evidence and not proof.
 | Number reading and encoding | `ScriptNum`, `RoundTrip`, `MinEncode`, `MinimalUnique` | acceptance condition of the reader, round trip, uniqueness of minimal encodings | 1.18 million inputs against the node's own C++ reader and encoder |
 | OP_CAT, OP_SPLIT, OP_NUM2BIN, OP_BIN2NUM, OP_SIZE, OP_SUBSTR, OP_LEFT, OP_RIGHT | `Splice`, `SpliceProps`, `Convert` | results on success, error conditions, inverse laws | 6,264 vectors on v1.2.3 `VerifyScript` |
 | OP_LSHIFTNUM, OP_RSHIFTNUM | `ShiftNum` | results are x·2ⁿ and x/2ⁿ toward zero; the big-integer refusal | 4,560 vectors on v1.2.3 `VerifyScript` |
-| OP_LSHIFT, OP_RSHIFT | `ByteShift` | result length only; the result is DEFINED arithmetically, and that the source's byte loop computes it is not proved | 1,920 vectors on v1.2.3 `VerifyScript` |
+| OP_LSHIFT, OP_RSHIFT | `ByteShift`, `ByteShiftLoop` | result length; the result is defined arithmetically, and a transcription of the source's `LShift` and `RShift` byte loops returns exactly that, for every count and every length (`lshiftLoop_eq`, `rshiftLoop_eq`, `opLShift_eq_src`, `opRShift_eq_src`) | 1,920 vectors on v1.2.3 `VerifyScript`; the transcription against the unmodified compiled `LShift` and `RShift` on 1,449,305 inputs (`difftest/shift_compare.sh`) |
 | 25 arithmetic and comparison opcodes | `Arith`, `ArithProps` | results of OP_ADD, OP_MUL, OP_DIV, OP_MOD; no 64-bit overflow before Genesis | 20,256 vectors on v1.2.3 `VerifyScript` |
 | The interpreter loop: decoding, minimal pushes, conditionals, OP_RETURN, stack, alt-stack and bitwise opcodes, limits, final checks | `Interp`, `InterpProps` | only that the loop's fuel is never exhausted, and two truthiness facts | about one million random scripts on v1.2.3 `VerifyScript` (see `difftest/README.md`) |
 
@@ -33,7 +33,9 @@ Not modelled in script:
 - the stack-memory limit, and elements above 4,096 bytes inside whole scripts;
 - a non-empty unlocking script (whole scripts are run against an empty one);
 - spends validated before Chronicle activation;
-- the chunked path of the byte shifts for counts above 2³¹ − 1.
+- the chunked path of the byte shifts for counts above 2³¹ − 1 (it can only be
+  reached by an element of more than 2²⁸ bytes: a count of at least the bit
+  length zero-fills before the loop runs).
 
 ## Signatures
 
@@ -64,6 +66,9 @@ parsing.
 - Every model was written by reading the v1.2.3 source. A theorem is about the
   model. It is about the node only as far as the model matches the node, and
   the tests are the evidence for that match.
+- A transcription of C++ into Lean (the byte-shift loops in `ByteShiftLoop`) is
+  checked against the compiled C++ by test, not by proof: the theorem is about
+  the Lean text.
 - The compiled reference used for testing was built for x86-64 with g++ 13.3.
   Behaviour that depends on the compiler or target is outside these tests.
 - Theorems that use `bv_decide` depend on its native-evaluation axioms; the

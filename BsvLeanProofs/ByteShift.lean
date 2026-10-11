@@ -13,8 +13,10 @@ divides by `2^n`. The length never changes. The count is read with the era's
 number reader and a negative count is refused.
 What differs from the source: the source moves bytes and bits in a loop, and
 for counts above `INT32_MAX` applies the helper in chunks (which needs an
-element longer than 268 MB to be reached). That the loop computes this
-arithmetic is NOT proved here; the vectors are the evidence.
+element longer than 268 MB to be reached; the chunking is not modelled). That
+the loop computes this arithmetic is proved in `ByteShiftLoop.lean`, for a
+transcription of the loop; the vectors and `difftest/shift_compare.sh` are the
+evidence that the transcription is the source's.
 -/
 
 namespace Bsv.Splice

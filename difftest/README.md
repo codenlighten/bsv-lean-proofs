@@ -10,6 +10,7 @@ kept in this repository; each script takes their locations as arguments.
 | `run_gosdk.sh <go-sdk v1.7.0 copy> <go-sdk 511b58ce checkout>` | `check170`, `checkMaster` | `checkHashTypeEncoding` called from a test dropped into the package | 2 × 4,096 (the whole domain) |
 | `node_hashtype.py <verify_script> <script_error.h> <fixture json>` then compare with `readercheck sighashNode` | `nodeVerifyScript` | a compiled bitcoin-sv v1.2.2 `VerifyScript` on `<sig> <pubkey> OP_CHECKSIG` | 2,048 (the whole domain) |
 | `merkle_compare.py <merkledump> <merkle_ref>` | `rootLit`, `mutatedLit`, `branchLit` | the reference node's `ComputeMerkleRoot` and `ComputeMerkleBranch`, linked from its built libraries (`merkle_ref.cpp`) | 9,718 |
+| `shift_compare.sh <v1.2.3 interpreter.cpp>` | `lshiftLoop`, `rshiftLoop` (via `shiftcheck`) | `LShift` and `RShift` extracted unmodified from the v1.2.3 `interpreter.cpp` and compiled (g++, ASan and UBSan on) | 1,449,305: every 1- and 2-byte string with every count below its bit length, and 200,000 seeded random strings of 3 to 64 bytes |
 | `vectors_oracle.py <vectors.json> <verify_script> <script_error.h> expected` | `Bsv.Splice` (the vectors in `vectors/` are generated from it by the `vectors` executable) | a compiled bitcoin-sv v1.2.3 `VerifyScript` | 2,078 |
 
 `merkle_ref.cpp` is compiled against a built bitcoin-sv tree with the include

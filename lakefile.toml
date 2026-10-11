@@ -28,3 +28,7 @@ root = "Vectors"
 [[lean_exe]]
 name = "scripteval"
 root = "ScriptEval"
+
+[[lean_exe]]
+name = "shiftcheck"
+root = "ShiftCheck"

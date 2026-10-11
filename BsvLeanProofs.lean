@@ -21,6 +21,7 @@ import BsvLeanProofs.Convert
 import BsvLeanProofs.MinimalUnique
 import BsvLeanProofs.ShiftNum
 import BsvLeanProofs.ByteShift
+import BsvLeanProofs.ByteShiftLoop
 import BsvLeanProofs.ArithProps
 import BsvLeanProofs.Interp
 import BsvLeanProofs.InterpProps
