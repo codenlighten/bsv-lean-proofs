@@ -20,8 +20,8 @@ of them describes an error outcome.
   `step_return_done`, `step_return_cond`: OP_RETURN after Genesis;
 * `execOp_*`: the stack effect of single opcodes.
 
-Not covered: OP_VERIF / OP_VERNOTIF (0x65, 0x66), the error outcomes of `step`, and
-OP_RETURN before Genesis (an error) or while skipping (`step_skip` excludes it).
+Not covered here: OP_VERIF / OP_VERNOTIF (0x65, 0x66), PUSHDATA decoding, the error outcomes
+of `step`, and OP_RETURN while skipping or before Genesis. They are in `InterpCases.lean`.
 
 Everything is about the Lean text of `Interp.lean`; whether that text is
 `EvalScript` is the subject of `difftest/README.md`.

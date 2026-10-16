@@ -25,6 +25,7 @@ import BsvLeanProofs.ByteShiftLoop
 import BsvLeanProofs.InterpSteps
 import BsvLeanProofs.InterpRuns
 import BsvLeanProofs.ThresholdCounter
+import BsvLeanProofs.InterpCases
 import BsvLeanProofs.ArithProps
 import BsvLeanProofs.Interp
 import BsvLeanProofs.InterpProps
